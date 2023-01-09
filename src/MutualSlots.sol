@@ -26,9 +26,18 @@ contract MutualSlots is Ownable {
 
     /// @notice Calculate gap from percent of a given price
     /// @dev Gap amount by dividing the numerator by the denominator which - e.g: 1/100 = 0.01 or 1% percent;
-    /// @param _price amount between 1e8 & 1e20.
+    /// @param _price amount between 1e8 & 1e20
     /// @return gap amount in 8 decimals number to fit Oracle format
     function getGapByPrice(uint256 _price) public view returns (uint256) {
         return _price * GAP_NUMERATOR / GAP_DENOMINATOR;
+    }
+
+    /// @notice Calculate slot size from a given gap
+    /// @dev Gap amount by dividing the _gap amount by the number of slots
+    /// @param _gap amount in 8 decimals number
+    /// @param _slots number of slots.
+    /// @return return slot size amount in 8 decimals
+    function getSlotSize(uint256 _gap, uint8 _slots) public pure returns (uint256) {
+        return _gap / _slots;
     }
 }

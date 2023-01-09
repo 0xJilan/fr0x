@@ -24,4 +24,11 @@ contract MutualSlotsTest is Test {
         emit log_named_uint("Gap Expected: ", expected);
         assertEq(mutualSlots.getGapByPrice(_price), expected);
     }
+
+    function testGetSlotSize(uint256 _gap, uint8 _slots) public {
+        vm.assume(_gap >= 1e8 && _gap <= 1e13 && _slots >= 1);
+        uint256 expected = _gap / _slots;
+        emit log_named_uint("Slot size Expected: ", expected);
+        assertEq(mutualSlots.getSlotSize(_gap, _slots), expected);
+    }
 }
