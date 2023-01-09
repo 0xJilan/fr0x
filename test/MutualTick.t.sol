@@ -9,16 +9,12 @@ contract MutualTickTest is Test {
 
     function setUp() public {
         mutualTick = new MutualTick();
-        mutualTick.setNumber(0);
     }
 
-    function testIncrement() public {
-        mutualTick.increment();
-        assertEq(mutualTick.number(), 1);
-    }
-
-    function testSetNumber(uint256 x) public {
-        mutualTick.setNumber(x);
-        assertEq(mutualTick.number(), x);
+    function testGetFeeAmount(uint96 _amount) public {
+        vm.assume(_amount >= mutualTick.MIN_BET() && _amount <= mutualTick.MAX_BET());
+        uint256 expected = _amount * mutualTick.FEE_NUMERATOR() / mutualTick.FEE_DENOMINATOR();
+        emit log_named_uint("Amount Expected: ", expected);
+        assertEq(mutualTick.getFeeAmount(_amount), expected);
     }
 }
