@@ -14,7 +14,50 @@ contract MutualSlots is Ownable {
     uint256 public MAX_BET = 100 ether; //maximum amount to bet //TODO: transfer to Constructor
     uint8 public GAP_NUMERATOR = 1; //numerator to calculate gap //TODO: transfer to Constructor
     uint16 public GAP_DENOMINATOR = 100; //denominator to calculate gap //TODO: transfer to Constructor
-    uint8 public SLOTS = 10; //number of slots to buy in range
+    uint8 public SLOTS = 10; //number of slots to buy in range //TODO: transfer to Constructor
+    uint64 public EPOCH = 10 minutes; //duration of an epoch expressed in seconds //TODO: transfer to Constructor
+    Contest[] contests; //array of all contests formatted as struct Contest
+    uint64 public lastClosedID; //ID of last closed contest
+    uint64 public lastResolvedID; //ID of last resolved contest
+
+
+    enum ContestStatus {
+        OPEN,
+        CLOSE,
+        MATURED
+    } //all status for contests
+    struct SlotOption {
+        address user; //user address
+        uint256 amount; //amount bet
+    }
+    struct Contest {
+        ContestStatus status; //status of Contest
+        uint256 startedAt; //timestamp of starting time
+        uint256 closableAt; //timestamp of closable time
+        uint256 maturityAt; //timestamp of maturity time
+        uint256 startingPrice; //ETH price on launch;
+        uint256 maturyityPrice; //ETH price at resolve timestamp;
+        PoolByTen poolByTen; //pool of 10 slots
+        PoolByThree poolByThree; //pool of 3 slots
+        PoolByTwice poolByTwice; //pool of 2 slots
+    }
+    struct PoolByTen {
+        SlotOption[10] slots; //array of 10 slots to fill with users options
+        uint256 totalAmount; //total amount deposited in pool;
+        uint8 winningSlots[]; //array of winning slots;
+    }
+    struct PoolByThree {
+        SlotOption[3] slots; //array of 3 slots to fill with users options
+        uint256 totalAmount; //total amount deposited in pool;
+        uint8 winningSlots[]; //array of winning slots;
+    }
+    struct PoolByTwice {
+        SlotOption[2] slots; //array of 2 slots to fill with users options
+        uint256 totalAmount; //total amount deposited in pool;
+        uint8 winningSlots[]; //array of winning slots;
+    }
+
+
 
     /// @notice Calculate fees to be deducted from a given amount
     /// @dev Fee amount by dividing the numerator by the denominator which - e.g: 3/1000 = 0.003 or 0.3% percent;
