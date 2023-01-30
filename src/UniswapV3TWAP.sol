@@ -1,10 +1,12 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol";
-import "@uniswap/v3-periphery/contracts/libraries/OracleLibrary.sol";
+import {IUniswapV3Factory} from "@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol";
+import {IUniswapV3Pool} from "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 
-contract UniswapV3Twap {
+import {OracleLibrary} from "@uniswap/v3-periphery/contracts/libraries/OracleLibrary.sol";
+
+contract UniswapV3TWAP {
     address public immutable token0;
     address public immutable token1;
     address public immutable pool;
@@ -42,7 +44,7 @@ contract UniswapV3Twap {
         int56 tickCumulativesDelta = tickCumulatives[1] - tickCumulatives[0];
 
         // int56 / uint32 = int24
-        int24 tick = int24(tickCumulativesDelta / secondsAgo);
+        int24 tick = int24(tickCumulativesDelta / int56(int32(secondsAgo)));
         // Always round to negative infinity
         /*
         int doesn't round down when it is negative
@@ -55,7 +57,7 @@ contract UniswapV3Twap {
         so if tickCumulativeDelta < 0 and division has remainder, then round
         down
         */
-        if (tickCumulativesDelta < 0 && (tickCumulativesDelta % secondsAgo != 0)) {
+        if (tickCumulativesDelta < 0 && (tickCumulativesDelta % int56(int32(secondsAgo)) != 0)) {
             tick--;
         }
 
